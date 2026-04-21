@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { fontFamily, fontWeight } from "../../tokens";
 
-export type TextFieldState = "default" | "hover" | "focused" | "error" | "disabled";
+export type TextFieldState = "default" | "focused" | "error" | "disabled";
 
 export interface TextFieldProps {
   placeholder?: string;
@@ -13,11 +13,10 @@ export interface TextFieldProps {
 }
 
 const borderMap: Record<TextFieldState, string> = {
-  default:  "1px solid #CCCCCC",
-  hover:    "1px solid #1F1F1F",
+  default:  "2px solid #1F1F1F",
   focused:  "2px solid #43023B",
   error:    "2px solid #A20101",
-  disabled: "1px solid #E0E0E0",
+  disabled: "2px solid #CCCCCC",
 };
 
 export function TextField({
@@ -28,12 +27,11 @@ export function TextField({
   disabled = false,
   label,
 }: TextFieldProps) {
-  const [hover,   setHover]   = useState(false);
-  const [focused, setFocused] = useState(false);
+  const [focused,  setFocused]  = useState(false);
   const [internal, setInternal] = useState("");
 
   const state: TextFieldState =
-    forceState ?? (disabled ? "disabled" : focused ? "focused" : hover ? "hover" : "default");
+    forceState ?? (disabled ? "disabled" : focused ? "focused" : "default");
 
   const inputStyle: React.CSSProperties = {
     width:           "356px",
@@ -73,8 +71,6 @@ export function TextField({
           setInternal(e.target.value);
           onChange?.(e.target.value);
         }}
-        onMouseEnter={() => !disabled && setHover(true)}
-        onMouseLeave={() => !disabled && setHover(false)}
         onFocus={() => !disabled && setFocused(true)}
         onBlur={() => setFocused(false)}
       />

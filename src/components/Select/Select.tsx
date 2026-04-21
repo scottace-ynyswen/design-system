@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { fontFamily, fontWeight } from "../../tokens";
 
-export type SelectState = "default" | "hover" | "focused" | "error" | "disabled";
+export type SelectState = "default" | "focused" | "error" | "disabled";
 
 export interface SelectProps {
   placeholder?: string;
@@ -32,11 +32,10 @@ function SearchIcon() {
 }
 
 const triggerBorder: Record<SelectState, string> = {
-  default:  "1px solid #CCCCCC",
-  hover:    "1px solid #1F1F1F",
+  default:  "2px solid #1F1F1F",
   focused:  "2px solid #43023B",
   error:    "2px solid #A20101",
-  disabled: "1px solid #E0E0E0",
+  disabled: "2px solid #CCCCCC",
 };
 
 const DEFAULT_ITEMS = ["Add account", "Add account", "Add account", "Add account"];
@@ -47,13 +46,12 @@ export function Select({
   forceState,
   disabled = false,
 }: SelectProps) {
-  const [hover,   setHover]   = useState(false);
   const [focused, setFocused] = useState(false);
   const [open,    setOpen]    = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const state: SelectState =
-    forceState ?? (disabled ? "disabled" : focused || open ? "focused" : hover ? "hover" : "default");
+    forceState ?? (disabled ? "disabled" : focused || open ? "focused" : "default");
 
   // Close on outside click
   useEffect(() => {
@@ -137,8 +135,6 @@ export function Select({
       <div
         style={triggerStyle}
         onClick={() => !disabled && setOpen((v) => !v)}
-        onMouseEnter={() => !disabled && setHover(true)}
-        onMouseLeave={() => !disabled && setHover(false)}
         onFocus={() => !disabled && setFocused(true)}
         onBlur={() => setFocused(false)}
         tabIndex={disabled ? -1 : 0}

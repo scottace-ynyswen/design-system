@@ -5,7 +5,6 @@ import { colors, fontFamily, fontWeight } from "./tokens";
 
 const STATES: { label: string; value: SelectState }[] = [
   { label: "Default",  value: "default"  },
-  { label: "Hover",    value: "hover"    },
   { label: "Focused",  value: "focused"  },
   { label: "Error",    value: "error"    },
   { label: "Disabled", value: "disabled" },
@@ -16,8 +15,7 @@ function stateColor(state: SelectState): string {
     case "focused":  return "#43023B";
     case "error":    return "#A20101";
     case "disabled": return "#AAAAAA";
-    case "hover":    return "#1F1F1F";
-    default:         return "#555555";
+    default:         return "#1F1F1F";
   }
 }
 
