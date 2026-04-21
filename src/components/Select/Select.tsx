@@ -104,10 +104,14 @@ export function Select({
   };
 
   const listStyle: React.CSSProperties = {
+    position:        "absolute",
+    top:             "48px",
+    left:            0,
     width:           "356px",
     border:          "2px solid #1F1F1F",
     backgroundColor: "#FFFFFF",
     boxSizing:       "border-box",
+    zIndex:          100,
   };
 
   const rowStyle = (i: number): React.CSSProperties => ({
@@ -129,7 +133,7 @@ export function Select({
   };
 
   return (
-    <div ref={ref} style={{ display: "inline-flex", flexDirection: "column" }}>
+    <div ref={ref} style={{ position: "relative", display: "inline-block" }}>
       <div
         style={triggerStyle}
         onClick={() => !disabled && setOpen((v) => !v)}
