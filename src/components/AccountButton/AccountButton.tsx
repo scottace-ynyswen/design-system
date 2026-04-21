@@ -1,169 +1,128 @@
 import React, { useState } from "react";
-import { colors, fontSize, fontFamily, fontWeight, radius, shadows, spacing } from "../../tokens";
+import { fontFamily, fontWeight } from "../../tokens";
 
-export type AccountButtonSize  = "xs" | "sm" | "md" | "lg";
 export type AccountButtonState = "default" | "hover" | "active" | "disabled";
+export type AccountButtonSize  = "xs" | "sm" | "md" | "lg";
 
 export interface AccountButtonProps {
-  label?: string;
-  onClick?: () => void;
-  size?: AccountButtonSize;
-  /** Override visual state for demos/storybook */
+  label?:      string;
   forceState?: AccountButtonState;
-  disabled?: boolean;
-  icon?: React.ReactNode;
-  type?: "button" | "submit" | "reset";
+  size?:       AccountButtonSize;
+  disabled?:   boolean;
+  onClick?:    () => void;
 }
 
-const sizeMap: Record<AccountButtonSize, {
-  height:    string;
-  paddingX:  string;
-  fontSize:  string;
-  iconSize:  number;
-  gap:       string;
-  borderRadius: string;
-}> = {
-  xs: {
-    height:   "28px",
-    paddingX: `${spacing[2]}px`,
-    fontSize: fontSize.xs,
-    iconSize: 12,
-    gap:      `${spacing[1]}px`,
-    borderRadius: radius.sm,
-  },
-  sm: {
-    height:   "32px",
-    paddingX: `${spacing[3]}px`,
-    fontSize: fontSize.sm,
-    iconSize: 14,
-    gap:      `${spacing[1]}px`,
-    borderRadius: radius.md,
-  },
-  md: {
-    height:   "40px",
-    paddingX: `${spacing[4]}px`,
-    fontSize: fontSize.md,
-    iconSize: 16,
-    gap:      `${spacing[2]}px`,
-    borderRadius: radius.md,
-  },
-  lg: {
-    height:   "48px",
-    paddingX: `${spacing[6]}px`,
-    fontSize: fontSize.lg,
-    iconSize: 18,
-    gap:      `${spacing[2]}px`,
-    borderRadius: radius.lg,
-  },
-};
-
-function getStateStyles(state: AccountButtonState): React.CSSProperties {
-  switch (state) {
-    case "hover":
-      return {
-        backgroundColor: colors.primary700,
-        boxShadow:       shadows.md,
-      };
-    case "active":
-      return {
-        backgroundColor: colors.primary800,
-        boxShadow:       shadows.sm,
-        transform:       "translateY(1px)",
-      };
-    case "disabled":
-      return {
-        backgroundColor: colors.neutral200,
-        color:           colors.neutral400,
-        cursor:          "not-allowed",
-        boxShadow:       shadows.none,
-      };
-    default:
-      return {
-        backgroundColor: colors.primary600,
-        boxShadow:       shadows.sm,
-      };
-  }
-}
-
-function PlusIcon({ size }: { size: number }) {
+function GlobeIcon({ size = 18, color = "#3C3C3C" }: { size?: number; color?: string }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M8 3V13M3 8H13"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-      />
+    <svg width={size} height={size} viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1.5" y="1.5" width="15" height="15" stroke={color} strokeWidth="1.5" />
+      <line x1="1.5" y1="9" x2="16.5" y2="9" stroke={color} strokeWidth="1" />
+      <line x1="9" y1="1.5" x2="9" y2="16.5" stroke={color} strokeWidth="1" />
+      <line x1="1.5" y1="1.5" x2="16.5" y2="16.5" stroke={color} strokeWidth="0.75" />
+      <line x1="16.5" y1="1.5" x2="1.5" y2="16.5" stroke={color} strokeWidth="0.75" />
     </svg>
   );
 }
 
+const heightMap: Record<AccountButtonSize, string> = {
+  xs: "32px",
+  sm: "36px",
+  md: "44px",
+  lg: "52px",
+};
+
+const fontSizeMap: Record<AccountButtonSize, string> = {
+  xs: "12px",
+  sm: "13px",
+  md: "14px",
+  lg: "15px",
+};
+
+const iconSizeMap: Record<AccountButtonSize, number> = {
+  xs: 14,
+  sm: 16,
+  md: 18,
+  lg: 20,
+};
+
+const widthMap: Record<AccountButtonSize, string> = {
+  xs: "220px",
+  sm: "260px",
+  md: "320px",
+  lg: "356px",
+};
+
+const bgMap: Record<AccountButtonState, string> = {
+  default:  "#FFFFFF",
+  hover:    "#F5F5F5",
+  active:   "#EBEBEB",
+  disabled: "#FAFAFA",
+};
+
+const textColorMap: Record<AccountButtonState, string> = {
+  default:  "#3C3C3C",
+  hover:    "#1F1F1F",
+  active:   "#1F1F1F",
+  disabled: "#BBBBBB",
+};
+
+const iconColorMap: Record<AccountButtonState, string> = {
+  default:  "#3C3C3C",
+  hover:    "#1F1F1F",
+  active:   "#1F1F1F",
+  disabled: "#CCCCCC",
+};
+
 export function AccountButton({
-  label = "Add account",
-  onClick,
-  size = "md",
+  label      = "Add account",
   forceState,
-  disabled = false,
-  icon,
-  type = "button",
+  size       = "md",
+  disabled   = false,
+  onClick,
 }: AccountButtonProps) {
-  const [hover, setHover]   = useState(false);
+  const [hover,  setHover]  = useState(false);
   const [active, setActive] = useState(false);
 
-  const derivedState: AccountButtonState =
-    forceState ??
-    (disabled ? "disabled" : active ? "active" : hover ? "hover" : "default");
+  const state: AccountButtonState =
+    forceState ?? (disabled ? "disabled" : active ? "active" : hover ? "hover" : "default");
 
-  const sz = sizeMap[size];
-  const stateStyles = getStateStyles(derivedState);
-
-  const buttonStyle: React.CSSProperties = {
-    display:        "inline-flex",
-    alignItems:     "center",
-    justifyContent: "center",
-    gap:            sz.gap,
-    height:         sz.height,
-    paddingLeft:    sz.paddingX,
-    paddingRight:   sz.paddingX,
-    fontSize:       sz.fontSize,
-    fontFamily:     fontFamily.sans,
-    fontWeight:     fontWeight.semibold,
-    color:          derivedState === "disabled" ? colors.neutral400 : colors.white,
-    border:         "none",
-    borderRadius:   sz.borderRadius,
-    outline:        "none",
-    cursor:         disabled ? "not-allowed" : "pointer",
-    transition:     "background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease",
-    whiteSpace:     "nowrap",
-    ...stateStyles,
+  const rowStyle: React.CSSProperties = {
+    display:         "flex",
+    alignItems:      "center",
+    width:           widthMap[size],
+    height:          heightMap[size],
+    padding:         "0 12px",
+    gap:             "10px",
+    backgroundColor: bgMap[state],
+    border:          "1px solid #E8E8E8",
+    boxSizing:       "border-box",
+    cursor:          disabled ? "not-allowed" : "pointer",
+    userSelect:      "none",
   };
 
+  const textStyle: React.CSSProperties = {
+    flex:       1,
+    fontSize:   fontSizeMap[size],
+    fontFamily: fontFamily.sans,
+    fontWeight: state === "default" ? fontWeight.regular : fontWeight.medium,
+    color:      textColorMap[state],
+  };
+
+  const iconColor = iconColorMap[state];
+  const iconSize  = iconSizeMap[size];
+
   return (
-    <button
-      type={type}
-      style={buttonStyle}
-      disabled={disabled}
+    <div
+      style={rowStyle}
       onClick={!disabled ? onClick : undefined}
       onMouseEnter={() => !disabled && setHover(true)}
       onMouseLeave={() => { setHover(false); setActive(false); }}
       onMouseDown={() => !disabled && setActive(true)}
       onMouseUp={() => setActive(false)}
-      onFocus={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.boxShadow = shadows.focus;
-      }}
-      onBlur={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.boxShadow =
-          stateStyles.boxShadow as string ?? shadows.sm;
-      }}
     >
-      {icon ?? <PlusIcon size={sz.iconSize} />}
-      {label}
-    </button>
+      <GlobeIcon size={iconSize} color={iconColor} />
+      <span style={textStyle}>{label}</span>
+      <GlobeIcon size={iconSize} color={iconColor} />
+    </div>
   );
 }

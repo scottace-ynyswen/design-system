@@ -1,52 +1,24 @@
 import { Select, AccountButton } from "./components";
-import type { SelectSize, SelectState, AccountButtonSize, AccountButtonState } from "./components";
+import type { SelectState, AccountButtonState, AccountButtonSize } from "./components";
 import { colors, fontFamily, fontSize, fontWeight } from "./tokens";
 
-const DEMO_OPTIONS = [
-  { value: "alice", label: "Alice Johnson" },
-  { value: "bob",   label: "Bob Smith" },
-  { value: "carol", label: "Carol White" },
-];
-
-const SELECT_SIZES:  SelectSize[]       = ["md", "lg"];
-const SELECT_STATES: SelectState[]      = ["default", "hover", "focused", "disabled"];
-const BTN_SIZES:     AccountButtonSize[] = ["xs", "sm", "md", "lg"];
-const BTN_STATES:    AccountButtonState[] = ["default", "hover", "active", "disabled"];
-
-const sectionStyle = {
-  marginBottom: "48px",
-};
+const SELECT_STATES: SelectState[] = ["default", "hover", "focused", "error"];
+const BTN_STATES: AccountButtonState[] = ["default", "hover", "active", "disabled"];
+const BTN_SIZES:  AccountButtonSize[]  = ["xs", "sm", "md", "lg"];
 
 const headingStyle = {
-  fontFamily: fontFamily.sans,
-  fontSize:   fontSize["2xl"],
-  fontWeight: fontWeight.bold,
-  color:      colors.neutral900,
-  marginBottom: "8px",
+  fontFamily:   fontFamily.sans,
+  fontSize:     fontSize["2xl"],
+  fontWeight:   fontWeight.bold,
+  color:        colors.neutral900,
+  marginBottom: "6px",
 };
 
 const subheadStyle = {
   fontFamily:   fontFamily.sans,
   fontSize:     fontSize.sm,
-  color:        colors.neutral600,
-  marginBottom: "24px",
-};
-
-const gridStyle = {
-  display:             "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-  gap:                 "16px",
-};
-
-const cellStyle = {
-  display:       "flex",
-  flexDirection: "column" as const,
-  alignItems:    "flex-start",
-  gap:           "8px",
-  padding:       "16px",
-  background:    colors.neutral50,
-  borderRadius:  "8px",
-  border:        `1px solid ${colors.neutral200}`,
+  color:        colors.neutral500,
+  marginBottom: "32px",
 };
 
 const tagStyle = {
@@ -54,7 +26,8 @@ const tagStyle = {
   fontSize:     "11px",
   fontWeight:   fontWeight.medium,
   color:        colors.neutral600,
-  background:   colors.neutral200,
+  background:   colors.neutral100,
+  border:       `1px solid ${colors.neutral200}`,
   borderRadius: "4px",
   padding:      "2px 6px",
 };
@@ -65,7 +38,7 @@ export default function App() {
       style={{
         fontFamily: fontFamily.sans,
         padding:    "48px",
-        maxWidth:   "1200px",
+        maxWidth:   "1600px",
         margin:     "0 auto",
         background: colors.white,
         minHeight:  "100vh",
@@ -77,63 +50,60 @@ export default function App() {
           fontSize:     "32px",
           fontWeight:   fontWeight.bold,
           color:        colors.neutral900,
-          marginBottom: "8px",
+          marginBottom: "6px",
         }}
       >
         Design System
       </h1>
-      <p style={{ ...subheadStyle, marginBottom: "56px" }}>
-        Component showcase — all sizes × states
-      </p>
+      <p style={{ ...subheadStyle, marginBottom: "56px" }}>Component showcase</p>
 
-      {/* ── Select ─────────────────────────────────────────── */}
-      <section style={sectionStyle}>
+      {/* ── Select / Combobox ───────────────────────────────── */}
+      <section style={{ marginBottom: "64px" }}>
         <h2 style={headingStyle}>Select · "Pick a value"</h2>
-        <p style={subheadStyle}>
-          2 sizes × 4 states = 8 variants
-        </p>
-        <div style={gridStyle}>
-          {SELECT_SIZES.flatMap((size) =>
-            SELECT_STATES.map((state) => (
-              <div key={`${size}-${state}`} style={cellStyle}>
-                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" as const }}>
-                  <span style={tagStyle}>{size}</span>
-                  <span style={tagStyle}>{state}</span>
-                </div>
-                <Select
-                  options={DEMO_OPTIONS}
-                  size={size}
-                  forceState={state}
-                  disabled={state === "disabled"}
-                />
-              </div>
-            ))
-          )}
+        <p style={subheadStyle}>4 states × closed/open = 8 variants</p>
+
+        {/* Closed row */}
+        <p style={{ fontFamily: fontFamily.sans, fontSize: "12px", color: colors.neutral500, marginBottom: "12px", fontWeight: fontWeight.medium, textTransform: "uppercase", letterSpacing: "0.08em" }}>Closed</p>
+        <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", marginBottom: "40px" }}>
+          {SELECT_STATES.map((state) => (
+            <div key={`closed-${state}`} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <span style={tagStyle}>{state}</span>
+              <Select forceState={state} open={false} disabled={state === "disabled"} />
+            </div>
+          ))}
+        </div>
+
+        {/* Open row */}
+        <p style={{ fontFamily: fontFamily.sans, fontSize: "12px", color: colors.neutral500, marginBottom: "12px", fontWeight: fontWeight.medium, textTransform: "uppercase", letterSpacing: "0.08em" }}>Open</p>
+        <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+          {SELECT_STATES.map((state) => (
+            <div key={`open-${state}`} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <span style={tagStyle}>{state}</span>
+              <Select forceState={state} open={true} disabled={state === "disabled"} />
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ── AccountButton ──────────────────────────────────── */}
-      <section style={sectionStyle}>
+      {/* ── AccountButton / Row item ────────────────────────── */}
+      <section>
         <h2 style={headingStyle}>AccountButton · "Add account"</h2>
-        <p style={subheadStyle}>
-          4 sizes × 4 states = 16 variants
-        </p>
-        <div style={gridStyle}>
-          {BTN_SIZES.flatMap((size) =>
-            BTN_STATES.map((state) => (
-              <div key={`${size}-${state}`} style={cellStyle}>
-                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" as const }}>
-                  <span style={tagStyle}>{size}</span>
-                  <span style={tagStyle}>{state}</span>
-                </div>
-                <AccountButton
-                  size={size}
-                  forceState={state}
-                  disabled={state === "disabled"}
-                />
+        <p style={subheadStyle}>4 sizes × 4 states = 16 variants</p>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+          {BTN_SIZES.map((size) => (
+            <div key={size}>
+              <p style={{ fontFamily: fontFamily.sans, fontSize: "12px", color: colors.neutral500, marginBottom: "12px", fontWeight: fontWeight.medium, textTransform: "uppercase", letterSpacing: "0.08em" }}>{size}</p>
+              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+                {BTN_STATES.map((state) => (
+                  <div key={`${size}-${state}`} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <span style={tagStyle}>{state}</span>
+                    <AccountButton size={size} forceState={state} disabled={state === "disabled"} />
+                  </div>
+                ))}
               </div>
-            ))
-          )}
+            </div>
+          ))}
         </div>
       </section>
     </div>
