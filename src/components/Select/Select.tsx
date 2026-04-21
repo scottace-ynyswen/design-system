@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { fontFamily, fontWeight } from "../../tokens";
 
 export type SelectState = "default" | "hover" | "focused" | "error" | "disabled";
@@ -6,14 +6,13 @@ export type SelectState = "default" | "hover" | "focused" | "error" | "disabled"
 export interface SelectProps {
   placeholder?: string;
   items?: string[];
-  open?: boolean;
   forceState?: SelectState;
   disabled?: boolean;
 }
 
 function GlobeIcon({ size = 18, color = "#3C3C3C" }: { size?: number; color?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width={size} height={size} viewBox="0 0 18 18" fill="none">
       <rect x="1.5" y="1.5" width="15" height="15" stroke={color} strokeWidth="1.5" />
       <line x1="1.5" y1="9" x2="16.5" y2="9" stroke={color} strokeWidth="1" />
       <line x1="9" y1="1.5" x2="9" y2="16.5" stroke={color} strokeWidth="1" />
@@ -25,7 +24,7 @@ function GlobeIcon({ size = 18, color = "#3C3C3C" }: { size?: number; color?: st
 
 function SearchIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
       <circle cx="8" cy="8" r="5.25" stroke="#555555" strokeWidth="1.5" />
       <line x1="12.2" y1="12.2" x2="15.8" y2="15.8" stroke="#555555" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
@@ -45,15 +44,31 @@ const DEFAULT_ITEMS = ["Add account", "Add account", "Add account", "Add account
 export function Select({
   placeholder = "Pick a value",
   items = DEFAULT_ITEMS,
-  open = false,
   forceState,
   disabled = false,
 }: SelectProps) {
-  const [hover, setHover]     = useState(false);
+  const [hover,   setHover]   = useState(false);
   const [focused, setFocused] = useState(false);
+  const [open,    setOpen]    = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
   const state: SelectState =
-    forceState ?? (disabled ? "disabled" : focused ? "focused" : hover ? "hover" : "default");
+    forceState ?? (disabled ? "disabled" : focused || open ? "focused" : hover ? "hover" : "default");
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  // Close when forceState overrides to disabled/error
+  useEffect(() => {
+    if (forceState === "disabled") setOpen(false);
+  }, [forceState]);
 
   const triggerStyle: React.CSSProperties = {
     display:         "flex",
@@ -65,6 +80,7 @@ export function Select({
     boxSizing:       "border-box",
     cursor:          disabled ? "not-allowed" : "pointer",
     overflow:        "hidden",
+    userSelect:      "none",
   };
 
   const placeholderStyle: React.CSSProperties = {
@@ -74,7 +90,6 @@ export function Select({
     fontFamily: fontFamily.sans,
     fontWeight: state === "default" || state === "disabled" ? fontWeight.regular : fontWeight.medium,
     color:      disabled ? "#BBBBBB" : state === "default" ? "#999999" : "#555555",
-    userSelect: "none",
   };
 
   const searchBoxStyle: React.CSSProperties = {
@@ -95,14 +110,15 @@ export function Select({
     boxSizing:       "border-box",
   };
 
-  const rowStyle: React.CSSProperties = {
-    display:     "flex",
-    alignItems:  "center",
-    height:      "44px",
-    padding:     "0 12px",
-    gap:         "10px",
-    borderBottom: "1px solid #F0F0F0",
-  };
+  const rowStyle = (i: number): React.CSSProperties => ({
+    display:      "flex",
+    alignItems:   "center",
+    height:       "44px",
+    padding:      "0 12px",
+    gap:          "10px",
+    borderBottom: i < items.length - 1 ? "1px solid #F0F0F0" : "none",
+    cursor:       "pointer",
+  });
 
   const rowTextStyle: React.CSSProperties = {
     flex:       1,
@@ -113,9 +129,10 @@ export function Select({
   };
 
   return (
-    <div style={{ display: "inline-flex", flexDirection: "column" }}>
+    <div ref={ref} style={{ display: "inline-flex", flexDirection: "column" }}>
       <div
         style={triggerStyle}
+        onClick={() => !disabled && setOpen((v) => !v)}
         onMouseEnter={() => !disabled && setHover(true)}
         onMouseLeave={() => !disabled && setHover(false)}
         onFocus={() => !disabled && setFocused(true)}
@@ -131,7 +148,7 @@ export function Select({
       {open && (
         <div style={listStyle}>
           {items.map((item, i) => (
-            <div key={i} style={{ ...rowStyle, borderBottom: i < items.length - 1 ? "1px solid #F0F0F0" : "none" }}>
+            <div key={i} style={rowStyle(i)}>
               <GlobeIcon />
               <span style={rowTextStyle}>{item}</span>
               <GlobeIcon />

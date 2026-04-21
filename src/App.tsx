@@ -1,111 +1,87 @@
-import { Select, AccountButton } from "./components";
-import type { SelectState, AccountButtonState, AccountButtonSize } from "./components";
-import { colors, fontFamily, fontSize, fontWeight } from "./tokens";
+import { useState } from "react";
+import { Select } from "./components";
+import type { SelectState } from "./components";
+import { colors, fontFamily, fontWeight } from "./tokens";
 
-const SELECT_STATES: SelectState[] = ["default", "hover", "focused", "error"];
-const BTN_STATES: AccountButtonState[] = ["default", "hover", "active", "disabled"];
-const BTN_SIZES:  AccountButtonSize[]  = ["xs", "sm", "md", "lg"];
-
-const headingStyle = {
-  fontFamily:   fontFamily.sans,
-  fontSize:     fontSize["2xl"],
-  fontWeight:   fontWeight.bold,
-  color:        colors.neutral900,
-  marginBottom: "6px",
-};
-
-const subheadStyle = {
-  fontFamily:   fontFamily.sans,
-  fontSize:     fontSize.sm,
-  color:        colors.neutral500,
-  marginBottom: "32px",
-};
-
-const tagStyle = {
-  fontFamily:   fontFamily.sans,
-  fontSize:     "11px",
-  fontWeight:   fontWeight.medium,
-  color:        colors.neutral600,
-  background:   colors.neutral100,
-  border:       `1px solid ${colors.neutral200}`,
-  borderRadius: "4px",
-  padding:      "2px 6px",
-};
+const STATES: { label: string; value: SelectState }[] = [
+  { label: "Default",  value: "default"  },
+  { label: "Hover",    value: "hover"    },
+  { label: "Focused",  value: "focused"  },
+  { label: "Error",    value: "error"    },
+  { label: "Disabled", value: "disabled" },
+];
 
 export default function App() {
+  const [activeState, setActiveState] = useState<SelectState | undefined>(undefined);
+
   return (
     <div
       style={{
-        fontFamily: fontFamily.sans,
-        padding:    "48px",
-        maxWidth:   "1600px",
-        margin:     "0 auto",
-        background: colors.white,
-        minHeight:  "100vh",
+        fontFamily:      fontFamily.sans,
+        minHeight:       "100vh",
+        backgroundColor: "#FAFAFA",
+        display:         "flex",
+        flexDirection:   "column",
+        alignItems:      "center",
+        justifyContent:  "center",
+        gap:             "40px",
+        padding:         "48px 24px",
       }}
     >
-      <h1
-        style={{
-          fontFamily:   fontFamily.sans,
-          fontSize:     "32px",
-          fontWeight:   fontWeight.bold,
-          color:        colors.neutral900,
-          marginBottom: "6px",
-        }}
-      >
-        Design System
-      </h1>
-      <p style={{ ...subheadStyle, marginBottom: "56px" }}>Component showcase</p>
+      {/* Title */}
+      <div style={{ textAlign: "center" }}>
+        <h1 style={{ fontFamily: fontFamily.sans, fontSize: "28px", fontWeight: fontWeight.bold, color: colors.neutral900, marginBottom: "6px" }}>
+          Select
+        </h1>
+        <p style={{ fontFamily: fontFamily.sans, fontSize: "14px", color: colors.neutral500 }}>
+          Click the component to open · hover and focus work naturally
+        </p>
+      </div>
 
-      {/* ── Select / Combobox ───────────────────────────────── */}
-      <section style={{ marginBottom: "64px" }}>
-        <h2 style={headingStyle}>Select · "Pick a value"</h2>
-        <p style={subheadStyle}>4 states × closed/open = 8 variants</p>
+      {/* Component */}
+      <Select forceState={activeState} disabled={activeState === "disabled"} />
 
-        {/* Closed row */}
-        <p style={{ fontFamily: fontFamily.sans, fontSize: "12px", color: colors.neutral500, marginBottom: "12px", fontWeight: fontWeight.medium, textTransform: "uppercase", letterSpacing: "0.08em" }}>Closed</p>
-        <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", marginBottom: "40px" }}>
-          {SELECT_STATES.map((state) => (
-            <div key={`closed-${state}`} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <span style={tagStyle}>{state}</span>
-              <Select forceState={state} open={false} disabled={state === "disabled"} />
-            </div>
-          ))}
-        </div>
+      {/* State controls */}
+      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+        {STATES.map(({ label, value }) => {
+          const isActive = activeState === value || (value === "default" && activeState === undefined);
+          return (
+            <button
+              key={value}
+              onClick={() => setActiveState(value === "default" ? undefined : value)}
+              style={{
+                fontFamily:      fontFamily.sans,
+                fontSize:        "13px",
+                fontWeight:      isActive ? fontWeight.semibold : fontWeight.regular,
+                color:           isActive ? "#FFFFFF" : colors.neutral700,
+                backgroundColor: isActive ? stateColor(value) : "#FFFFFF",
+                border:          `1.5px solid ${isActive ? stateColor(value) : "#DDDDDD"}`,
+                borderRadius:    "20px",
+                padding:         "6px 16px",
+                cursor:          "pointer",
+                transition:      "all 0.15s ease",
+              }}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
 
-        {/* Open row */}
-        <p style={{ fontFamily: fontFamily.sans, fontSize: "12px", color: colors.neutral500, marginBottom: "12px", fontWeight: fontWeight.medium, textTransform: "uppercase", letterSpacing: "0.08em" }}>Open</p>
-        <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
-          {SELECT_STATES.map((state) => (
-            <div key={`open-${state}`} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <span style={tagStyle}>{state}</span>
-              <Select forceState={state} open={true} disabled={state === "disabled"} />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── AccountButton / Row item ────────────────────────── */}
-      <section>
-        <h2 style={headingStyle}>AccountButton · "Add account"</h2>
-        <p style={subheadStyle}>4 sizes × 4 states = 16 variants</p>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-          {BTN_SIZES.map((size) => (
-            <div key={size}>
-              <p style={{ fontFamily: fontFamily.sans, fontSize: "12px", color: colors.neutral500, marginBottom: "12px", fontWeight: fontWeight.medium, textTransform: "uppercase", letterSpacing: "0.08em" }}>{size}</p>
-              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-                {BTN_STATES.map((state) => (
-                  <div key={`${size}-${state}`} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <span style={tagStyle}>{state}</span>
-                    <AccountButton size={size} forceState={state} disabled={state === "disabled"} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Current state badge */}
+      <p style={{ fontFamily: fontFamily.sans, fontSize: "12px", color: colors.neutral400, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+        State: {activeState ?? "default (interactive)"}
+      </p>
     </div>
   );
+}
+
+function stateColor(state: SelectState): string {
+  switch (state) {
+    case "focused":  return "#43023B";
+    case "error":    return "#A20101";
+    case "disabled": return "#AAAAAA";
+    case "hover":    return "#1F1F1F";
+    default:         return "#555555";
+  }
 }
