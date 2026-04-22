@@ -7,6 +7,7 @@ import { ComponentsPage } from "./pages/ComponentsPage";
 import { TypographyPage } from "./pages/TypographyPage";
 import { SpacingPage } from "./pages/SpacingPage";
 import { BorderRadiusPage } from "./pages/BorderRadiusPage";
+import { IconsPage } from "./pages/IconsPage";
 import { fontFamily } from "./tokens";
 
 function renderPage(page: PageId) {
@@ -17,6 +18,7 @@ function renderPage(page: PageId) {
     case "typography":       return <TypographyPage />;
     case "spacing":          return <SpacingPage />;
     case "border-radius":    return <BorderRadiusPage />;
+    case "icons":            return <IconsPage />;
   }
 }
 

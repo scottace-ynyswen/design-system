@@ -6,6 +6,7 @@ export type PageId =
   | "typography"
   | "spacing"
   | "border-radius"
+  | "icons"
   | "components";
 
 interface NavItem {
@@ -23,6 +24,7 @@ const NAV: { section: string; items: NavItem[] }[] = [
       { id: "typography",       label: "Typography" },
       { id: "spacing",          label: "Spacing" },
       { id: "border-radius",    label: "Border Radius" },
+      { id: "icons",            label: "Icons" },
     ],
   },
   {
