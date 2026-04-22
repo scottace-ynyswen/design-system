@@ -1,99 +1,32 @@
 import { useState } from "react";
-import { Select, TextField } from "./components";
-import type { SelectState } from "./components";
-import { colors, fontFamily, fontWeight } from "./tokens";
+import { Sidebar } from "./layout/Sidebar";
+import type { PageId } from "./layout/Sidebar";
+import { ColourPrimitivePage } from "./pages/ColourPrimitivePage";
+import { ColourAliasPage } from "./pages/ColourAliasPage";
+import { ComponentsPage } from "./pages/ComponentsPage";
+import { StubPage } from "./pages/StubPage";
+import { fontFamily } from "./tokens";
 
-const STATES: { label: string; value: SelectState }[] = [
-  { label: "Default",  value: "default"  },
-  { label: "Focused",  value: "focused"  },
-  { label: "Error",    value: "error"    },
-  { label: "Disabled", value: "disabled" },
-];
-
-function stateColor(state: SelectState): string {
-  switch (state) {
-    case "focused":  return "#43023B";
-    case "error":    return "#A20101";
-    case "disabled": return "#AAAAAA";
-    default:         return "#1F1F1F";
+function renderPage(page: PageId) {
+  switch (page) {
+    case "colour-primitive": return <ColourPrimitivePage />;
+    case "colour-alias":     return <ColourAliasPage />;
+    case "components":       return <ComponentsPage />;
+    case "typography":       return <StubPage title="Typography" />;
+    case "spacing":          return <StubPage title="Spacing" />;
+    case "border-radius":    return <StubPage title="Border Radius" />;
   }
 }
 
 export default function App() {
-  const [activeState, setActiveState] = useState<SelectState | undefined>(undefined);
-  const forced = activeState;
+  const [page, setPage] = useState<PageId>("colour-primitive");
 
   return (
-    <div
-      style={{
-        fontFamily:      fontFamily.sans,
-        minHeight:       "100vh",
-        backgroundColor: "#FAFAFA",
-        display:         "flex",
-        flexDirection:   "column",
-        alignItems:      "center",
-        justifyContent:  "center",
-        gap:             "32px",
-        padding:         "48px 24px",
-      }}
-    >
-      {/* Title */}
-      <div style={{ textAlign: "center" }}>
-        <h1 style={{ fontFamily: fontFamily.sans, fontSize: "28px", fontWeight: fontWeight.bold, color: colors.neutral900, marginBottom: "6px" }}>
-          Components
-        </h1>
-        <p style={{ fontFamily: fontFamily.sans, fontSize: "14px", color: colors.neutral500 }}>
-          Click to interact · use buttons below to force a state
-        </p>
-      </div>
-
-      {/* Components */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "flex-start" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          <span style={{ fontFamily: fontFamily.sans, fontSize: "11px", fontWeight: fontWeight.medium, color: colors.neutral400, textTransform: "uppercase", letterSpacing: "0.08em" }}>Select</span>
-          <Select forceState={forced} disabled={forced === "disabled"} />
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          <span style={{ fontFamily: fontFamily.sans, fontSize: "11px", fontWeight: fontWeight.medium, color: colors.neutral400, textTransform: "uppercase", letterSpacing: "0.08em" }}>Text field</span>
-          <TextField
-            placeholder="Enter text"
-            forceState={forced}
-            disabled={forced === "disabled"}
-          />
-        </div>
-      </div>
-
-      {/* State controls */}
-      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
-        {STATES.map(({ label, value }) => {
-          const isActive = activeState === value || (value === "default" && activeState === undefined);
-          return (
-            <button
-              key={value}
-              onClick={() => setActiveState(value === "default" ? undefined : value)}
-              style={{
-                fontFamily:      fontFamily.sans,
-                fontSize:        "13px",
-                fontWeight:      isActive ? fontWeight.semibold : fontWeight.regular,
-                color:           isActive ? "#FFFFFF" : colors.neutral700,
-                backgroundColor: isActive ? stateColor(value) : "#FFFFFF",
-                border:          `1.5px solid ${isActive ? stateColor(value) : "#DDDDDD"}`,
-                borderRadius:    "20px",
-                padding:         "6px 16px",
-                cursor:          "pointer",
-                transition:      "all 0.15s ease",
-              }}
-            >
-              {label}
-            </button>
-          );
-        })}
-      </div>
-
-      <p style={{ fontFamily: fontFamily.sans, fontSize: "12px", color: colors.neutral400, letterSpacing: "0.06em", textTransform: "uppercase" }}>
-        State: {activeState ?? "default (interactive)"}
-      </p>
+    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#FAFAFA", fontFamily: fontFamily.sans }}>
+      <Sidebar active={page} onNavigate={setPage} />
+      <main style={{ flex: 1, overflowY: "auto" }}>
+        {renderPage(page)}
+      </main>
     </div>
   );
 }
