@@ -4,7 +4,9 @@ import type { PageId } from "./layout/Sidebar";
 import { ColourPrimitivePage } from "./pages/ColourPrimitivePage";
 import { ColourAliasPage } from "./pages/ColourAliasPage";
 import { ComponentsPage } from "./pages/ComponentsPage";
-import { StubPage } from "./pages/StubPage";
+import { TypographyPage } from "./pages/TypographyPage";
+import { SpacingPage } from "./pages/SpacingPage";
+import { BorderRadiusPage } from "./pages/BorderRadiusPage";
 import { fontFamily } from "./tokens";
 
 function renderPage(page: PageId) {
@@ -12,9 +14,9 @@ function renderPage(page: PageId) {
     case "colour-primitive": return <ColourPrimitivePage />;
     case "colour-alias":     return <ColourAliasPage />;
     case "components":       return <ComponentsPage />;
-    case "typography":       return <StubPage title="Typography" />;
-    case "spacing":          return <StubPage title="Spacing" />;
-    case "border-radius":    return <StubPage title="Border Radius" />;
+    case "typography":       return <TypographyPage />;
+    case "spacing":          return <SpacingPage />;
+    case "border-radius":    return <BorderRadiusPage />;
   }
 }
 
