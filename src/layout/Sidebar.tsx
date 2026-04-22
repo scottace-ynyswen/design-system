@@ -7,7 +7,8 @@ export type PageId =
   | "spacing"
   | "border-radius"
   | "icons"
-  | "components";
+  | "components"
+  | "ctas";
 
 interface NavItem {
   id: PageId;
@@ -31,6 +32,7 @@ const NAV: { section: string; items: NavItem[] }[] = [
     section: "Components",
     items: [
       { id: "components", label: "All Components" },
+      { id: "ctas",       label: "CTAs & Buttons" },
     ],
   },
 ];
